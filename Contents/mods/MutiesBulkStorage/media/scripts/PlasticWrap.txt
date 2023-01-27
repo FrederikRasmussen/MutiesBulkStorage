@@ -1,0 +1,54 @@
+module Mutie
+{
+    item SmallPlasticWrap
+    {
+        DisplayName = Sandwich-sized Plastic Wrap,
+        DisplayCategory = PackingMaterial,
+        Icon = PlasticWrap,
+        Type = Normal,
+        Weight = 0.1,
+    }
+
+    item SmallPlasticWrapFullFood
+    {
+        DisplayName = Plastic Wrapped Leftovers,
+        DisplayCategory = Food,
+        Icon = PlasticWrapFullFood,
+        Type = Food,
+        Tags = Leftovers,
+        ReplaceOnUse = SmallPlasticWrap,
+        Weight = 0.5,
+        HungerChange = -15,
+        StaticModel = Sandwich,
+        WorldStaticModel = CheeseSandwich,
+    }
+
+    recipe Wrap in plastic
+    {
+        Burger/BurgerRecipe/Burrito/BurritoRecipe/CheeseSandwich/PeanutButterSandwich/Sandwich/BaguetteSandwich/GrilledCheese,
+        SmallPlasticWrap,
+
+        Result: Mutie.SmallPlasticWrapFullFood,
+        OnCreate: MutiesBulkStorage.OnCreate.SaveLeftovers,
+        Time: 100.0,
+    }
+
+    item MediumPlasticWrap
+    {
+        DisplayName = Box-sized Plastic Wrap,
+        DisplayCategory = PackingMaterial,
+        Icon = PlasticWrap,
+        Type = Normal,
+        Weight = 0.2,
+    }
+
+    recipe Cut into sandwich-sized pieces
+    {
+        Mutie.MediumPlasticWrap,
+        keep Base.Scissors,
+
+        Result: Mutie.SmallPlasticWrap=4,
+        Time: 50.0,
+    }
+
+}

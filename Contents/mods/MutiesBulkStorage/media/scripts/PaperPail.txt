@@ -1,0 +1,69 @@
+module Mutie
+{
+    item PaperPail100Pack
+    {
+        DisplayName = Unfolded Paper Pail (100-pack),
+        DisplayCategory = PackingMaterial,
+        Icon = PaperPail100Pack,
+        Type = Drainable,
+        UseDelta = 0.01,
+        ReplaceOnDeplete = Mutie.MediumPlasticWrap,
+        Weight = 5.0,
+    }
+
+    recipe Remove unfolded pail
+    {
+        Mutie.PaperPail100Pack=1,
+
+        Result: Mutie.PaperPailUnfolded,
+        Time: 50.0,
+    }
+
+    item PaperPailUnfolded
+    {
+        DisplayName = Unfolded Paper Pail,
+        DisplayCategory = PackingMaterial,
+        Icon = PaperPailUnfolded,
+        Type = Normal,
+        Weight = 0.1,
+    }
+
+    recipe Fold paper pail
+    {
+        Mutie.PaperPailUnfolded,
+
+        Result: Mutie.PaperPailEmpty,
+        Time: 50.0,
+    }
+
+    item PaperPailEmpty
+    {
+        DisplayName = Paper Pail (Empty),
+        DisplayCategory = PackingMaterial,
+        Icon = PaperPailEmpty,
+        Type = Normal,
+        Weight = 0.2,
+    }
+
+    item PaperPailFull
+    {
+        DisplayName = Paper Pail with Leftovers,
+        DisplayCategory = Food,
+        Icon = PaperPailFull,
+        Type = Food,
+        Tags = Leftovers,
+        ReplaceOnUse = PaperPailEmpty,
+        Weight = 0.5,
+        HungerChange = -15,
+    }
+
+    recipe Save leftovers in paper pail
+    {
+        SoupBowl/StewBowl/BeanBowl/RamenBowl/RiceBowl/PastaBowl/NoodleSoup,
+        PaperPailEmpty,
+
+        Result: Mutie.PaperPailFull,
+        OnCreate:MutiesBulkStorage.OnCreate.SaveLeftovers,
+        Time: 100.0,
+    }
+}

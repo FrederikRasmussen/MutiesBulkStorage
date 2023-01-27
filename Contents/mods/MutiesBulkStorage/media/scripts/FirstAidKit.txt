@@ -1,0 +1,104 @@
+module Mutie
+{
+    item FirstAidKitPacked
+    {
+        DisplayCategory = Container,
+        Weight	=	1,
+        Type	=	Normal,
+        DisplayName	=	First Aid Kit (Packed),
+        Icon	=	FirstAid,
+        Medical = TRUE,
+		ReplaceInSecondHand = Bag_FirstAidKit_LHand holdingbagleft,
+        ReplaceInPrimaryHand = Bag_FirstAidKit_RHand holdingbagright,
+        WorldStaticModel = LunchBoxMedic_Ground,
+    }
+
+    recipe Carefully pack first aid kit
+    {
+        FirstAidKit,
+
+        Result: Mutie.FirstAidKitPacked,
+        Time: 100.0,
+    }
+
+    recipe Add bandage to first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+        [Recipe.GetItemTypes.Bandage],
+
+        Result: Mutie.FirstAidKitPacked,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasRoomForBandage,
+        OnCreate: MutiesBulkStorage.OnCreate.AddToStorage,
+    }
+
+    recipe Take bandage from first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+
+        Result: Base.Bandage,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasBandage,
+        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeBandage,
+    }
+
+    recipe Add disinfectant to first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+        [Recipe.GetItemTypes.Disinfectant]=1,
+
+        Result: Mutie.FirstAidKitPacked,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasRoomForDisinfectant,
+        OnCreate: MutiesBulkStorage.OnCreate.AddWholeToStorage,
+    }
+
+    recipe Take disinfectant from first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+
+        Result: Base.Disinfectant,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasDisinfectant,
+        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeDisinfectant,
+    }
+
+    recipe Add painkillers to first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+        Base.Pills=1,
+
+        Result: Mutie.FirstAidKitPacked,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasRoomForPainkillers,
+        OnCreate: MutiesBulkStorage.OnCreate.AddWholeToStorage,
+    }
+
+    recipe Take painkillers from first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+
+        Result: Base.Pills,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasPainkillers,
+        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakePainkillers,
+    }
+}
