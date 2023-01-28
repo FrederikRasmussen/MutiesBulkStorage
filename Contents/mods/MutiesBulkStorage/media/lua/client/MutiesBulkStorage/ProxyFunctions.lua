@@ -17,3 +17,7 @@ end
 function MutiesBulkStorage.Proxies.setUses(drainableComboItem, useDelta)
     return drainableComboItem:setDelta(useDelta);
 end
+
+function MutiesBulkStorage.Proxies.getWeight(inventoryItem)
+    return inventoryItem:getActualWeight();
+end

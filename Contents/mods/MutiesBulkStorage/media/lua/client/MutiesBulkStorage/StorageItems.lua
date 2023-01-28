@@ -6,8 +6,8 @@ function MutiesBulkStorage.AddStorage(fullType)
     StorageItems[fullType] = StorageItems[fullType] or {}
     StorageItems[fullType].type = StorageItems[fullType].type or fullType;
     StorageItems[fullType].items = StorageItems[fullType].items or {};
-    StorageItems[fullType].preAdd = StorageItems[fullType].preAdd or {};
-    StorageItems[fullType].postAdd = StorageItems[fullType].postAdd or {};
+    StorageItems[fullType].weightModifier = 1.0;
+    StorageItems[fullType].minimumWeight = 1.0;
 end
 
 function MutiesBulkStorage.RemoveStorage(fullType)
@@ -18,6 +18,7 @@ end
 
 function MutiesBulkStorage.AddStorableToStorage(storageFullType, storableFullType)
     StorageItems[storageFullType].items[storableFullType] = StorageItems[storageFullType].items[storableFullType] or {};
+    MutiesBulkStorage.AddFieldToStorable(storageFullType, storableFullType, "weight", MutiesBulkStorage.Proxies.getWeight);
 end
 
 function MutiesBulkStorage.RemoveStorableFromStorage(storageFullType, storableFullType)
@@ -38,11 +39,12 @@ function MutiesBulkStorage.AddLimitToStorable(storageFullType, storableFullType,
     storableItem.limit = limitName;
 end
 
-function MutiesBulkStorage.PreAddForStorage(fullType, preAdd)
-    table.insert(StorageItems[fullType].preAdd, preAdd);
+function MutiesBulkStorage.AddStorageWeightModifier(storageFullType, multiplier)
+    StorageItems[storageFullType].weightModifier = multiplier;
 end
 
-function MutiesBulkStorage.PostAddForStorage(fullType, postAdd)
-    table.insert(StorageItems[fullType].postAdd, postAdd);
+function MutiesBulkStorage.AddStorageMinimumWeight(storageFullType, minimumWeight)
+    StorageItems[storageFullType].minimumWeight = minimumWeight;
 end
+
 return StorageItems;

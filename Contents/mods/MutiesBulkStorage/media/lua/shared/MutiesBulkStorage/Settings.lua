@@ -1,5 +1,7 @@
 local Settings = {};
 Settings.LeftoverRatio = 0.5;
+Settings.FirstAidKit = {};
+Settings.FirstAidKit.WeightModifier = 0.5;
 Settings.Limits = {};
 Settings.Limits.Default = 50;
 Settings.Limits.FirstAidKitBandage = 20;

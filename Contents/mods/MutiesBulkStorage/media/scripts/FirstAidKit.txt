@@ -35,19 +35,6 @@ module Mutie
         OnCreate: MutiesBulkStorage.OnCreate.AddToStorage,
     }
 
-    recipe Take bandage from first aid kit
-    {
-        keep Mutie.FirstAidKitPacked,
-
-        Result: Base.Bandage,
-        RemoveResultItem: true,
-
-        Time: 100.0,
-        StopOnWalk: false,
-        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasBandage,
-        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeBandage,
-    }
-
     recipe Add disinfectant to first aid kit
     {
         keep Mutie.FirstAidKitPacked,
@@ -62,19 +49,6 @@ module Mutie
         OnCreate: MutiesBulkStorage.OnCreate.AddWholeToStorage,
     }
 
-    recipe Take disinfectant from first aid kit
-    {
-        keep Mutie.FirstAidKitPacked,
-
-        Result: Base.Disinfectant,
-        RemoveResultItem: true,
-
-        Time: 100.0,
-        StopOnWalk: false,
-        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasDisinfectant,
-        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeDisinfectant,
-    }
-
     recipe Add painkillers to first aid kit
     {
         keep Mutie.FirstAidKitPacked,
@@ -87,6 +61,32 @@ module Mutie
         StopOnWalk: false,
         OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasRoomForPainkillers,
         OnCreate: MutiesBulkStorage.OnCreate.AddWholeToStorage,
+    }
+
+    recipe Take bandage from first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+
+        Result: Base.Bandage,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasBandage,
+        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeBandage,
+    }
+
+    recipe Take disinfectant from first aid kit
+    {
+        keep Mutie.FirstAidKitPacked,
+
+        Result: Base.Disinfectant,
+        RemoveResultItem: true,
+
+        Time: 100.0,
+        StopOnWalk: false,
+        OnTest: MutiesBulkStorage.Predicate.FirstAidKitHasDisinfectant,
+        OnCreate: MutiesBulkStorage.OnCreate.FirstAidKitTakeDisinfectant,
     }
 
     recipe Take painkillers from first aid kit

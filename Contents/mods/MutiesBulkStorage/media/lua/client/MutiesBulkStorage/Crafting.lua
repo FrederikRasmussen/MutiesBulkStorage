@@ -4,11 +4,24 @@ local Settings = MutiesBulkStorage.Settings;
 local Limits = Settings.Limits;
 
 ---@param storage InventoryItem
-function MutiesBulkStorage.InitialiseOrGetModDataForStorage(storage)
+function MutiesBulkStorage.InitialiseOrGetStoredItems(storage)
     local data = storage:getModData();
     data.MutiesBulkStorage = data.MutiesBulkStorage or {};
     data.MutiesBulkStorage.StoredItems = data.MutiesBulkStorage.StoredItems or {};
     return data.MutiesBulkStorage.StoredItems;
+end
+
+function MutiesBulkStorage.InitialiseOrGetStoredWeight(storage)
+    local data = storage:getModData();
+    data.MutiesBulkStorage = data.MutiesBulkStorage or {};
+    data.MutiesBulkStorage.StoredWeight = data.MutiesBulkStorage.StoredWeight or 0.0;
+    return data.MutiesBulkStorage.StoredWeight;
+end
+
+function MutiesBulkStorage.SetStoredWeight(storage, storedWeight)
+    local data = storage:getModData();
+    data.MutiesBulkStorage = data.MutiesBulkStorage or {};
+    data.MutiesBulkStorage.StoredWeight = storedWeight;
 end
 
 function MutiesBulkStorage.LimitUsedByStorableType(storage, storableType)
@@ -18,7 +31,7 @@ function MutiesBulkStorage.LimitUsedByStorableType(storage, storableType)
 end
 
 function MutiesBulkStorage.CountStorageUsedByLimitName(storage, limitName)
-    local storedItems = MutiesBulkStorage.InitialiseOrGetModDataForStorage(storage);
+    local storedItems = MutiesBulkStorage.InitialiseOrGetStoredItems(storage);
     if limitName == "Default" then
         return #storedItems;
     end
@@ -71,21 +84,28 @@ local function addToStorage(player, ingredients, shouldRemoveStorable)
         error("Storage item " .. storage:getFullType() ..
                 " attempted to add incompatible item " .. item:getFullType());
     end
-    local storedItems = MutiesBulkStorage.InitialiseOrGetModDataForStorage(storage);
-    for preAddFunction, _ in pairs(storageFunctions.preAdd) do
-        preAddFunction(storage, item);
-    end
+    local storedItems = MutiesBulkStorage.InitialiseOrGetStoredItems(storage);
     local itemData = {};
     itemData.type = item:getFullType();
+    itemData.weight = item:getActualWeight();
     for field, functions in pairs(itemFunctions) do
         if field ~= "limit" then
             itemData[field] = functions.getter(item);
         end
     end
     table.insert(storedItems, itemData);
-    for postAddFunction, _ in pairs(storageFunctions.postAdd) do
-        postAddFunction(storage, item);
+
+    local storedWeight = MutiesBulkStorage.InitialiseOrGetStoredWeight(storage);
+    storedWeight = storedWeight + itemData.weight;
+    MutiesBulkStorage.SetStoredWeight(storage, storedWeight);
+    local finalWeight = storedWeight * storageFunctions.weightModifier;
+    if finalWeight < storageFunctions.minimumWeight then
+        storage:setActualWeight(storageFunctions.minimumWeight);
+    else
+        storage:setActualWeight(finalWeight);
     end
+    storage:setCustomWeight(true);
+
     if shouldRemoveStorable then
         player:getInventory():removeItemWithIDRecurse(item:getID());
     end
@@ -101,7 +121,7 @@ function MutiesBulkStorage.OnCreate.AddWholeToStorage(ingredients, result, playe
 end
 
 function MutiesBulkStorage.FindItemInStorage(storage, limitName)
-    local items = MutiesBulkStorage.InitialiseOrGetModDataForStorage(storage);
+    local items = MutiesBulkStorage.InitialiseOrGetStoredItems(storage);
     for _, item in pairs(items) do
         if limitName then
             if limitName == MutiesBulkStorage.LimitUsedByStorableType(storage, item.type) then
@@ -127,10 +147,23 @@ function MutiesBulkStorage.InstantiateInventoryItemFromStorage(storage, item)
 end
 
 function MutiesBulkStorage.RemoveItemFromStorage(storage, item)
-    local items = MutiesBulkStorage.InitialiseOrGetModDataForStorage(storage);
+    local items = MutiesBulkStorage.InitialiseOrGetStoredItems(storage);
     for i = 1, #items do
         if item == items[i] then
             table.remove(items, i);
+
+            local storedWeight = MutiesBulkStorage.InitialiseOrGetStoredWeight(storage);
+            storedWeight = storedWeight - item.weight;
+            MutiesBulkStorage.SetStoredWeight(storage, storedWeight);
+            local storageFunctions = StorageItems[storage:getFullType()];
+            local finalWeight = storedWeight * storageFunctions.weightModifier;
+            if finalWeight < storageFunctions.minimumWeight then
+                storage:setActualWeight(storageFunctions.minimumWeight);
+            else
+                storage:setActualWeight(finalWeight);
+            end
+            storage:setCustomWeight(true);
+
             return true;
         end
     end

@@ -30,6 +30,8 @@ local function addFirstAidKitPackedStorage()
     MutiesBulkStorage.AddLimitToStorable(fak.itemType, painkillersType, fak.LimitNames.Painkillers);
     -- Dynamically add bandages as storables
     local allItems = getScriptManager():getAllItems();
+    ---@type Item
+    local firstAidKitScriptItem;
     for i = 0, allItems:size() - 1 do
         ---@type Item
         local item = allItems:get(i);
@@ -40,7 +42,12 @@ local function addFirstAidKitPackedStorage()
                     "bandagePower", proxies.getBandagePower);
             MutiesBulkStorage.AddLimitToStorable(fak.itemType, type, fak.LimitNames.Bandage);
         end
+        if item:getFullName() == fak.itemType then
+            firstAidKitScriptItem = item;
+        end
     end
+    MutiesBulkStorage.AddStorageWeightModifier(fak.itemType, fak.Settings.WeightModifier);
+    MutiesBulkStorage.AddStorageMinimumWeight(fak.itemType, firstAidKitScriptItem:getActualWeight());
 end
 Events.OnInitGlobalModData.Add(addFirstAidKitPackedStorage);
 
