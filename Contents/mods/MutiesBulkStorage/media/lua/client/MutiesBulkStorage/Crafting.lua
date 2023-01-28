@@ -46,7 +46,7 @@ end
 function MutiesBulkStorage.Predicate.CanTakeFromStorage(storage, limitName)
     if not storage then return true end
     if not storage.getModData then return true end
-    if not storage:getModData() or not storage:getModData().MutiesBulkStorage then return true end
+    if not storage:getModData() then return storage:getModData().MutiesBulkStorage; end
     limitName = limitName or StorageItems[storage:getFullType()].limit or "Default";
     local count = MutiesBulkStorage.CountStorageUsedByLimitName(storage, limitName);
     return count > 0;

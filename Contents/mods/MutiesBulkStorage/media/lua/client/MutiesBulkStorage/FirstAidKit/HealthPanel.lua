@@ -21,7 +21,7 @@ end
 -- Used in ISHealthPanel.lua
 function BandageHandler:checkItem(item)
     if item:getFullType() == fak.itemType then
-        if #fak.bandages(item) > 0 then
+        if MutiesBulkStorage.Predicate.CanTakeFromStorage(item, fak.LimitNames.Bandage) then
             table.insert(self.items, item);
         end
     end
@@ -57,10 +57,10 @@ function BandageHandler:perform(previousAction)
         self.panel.actions[action] = self.bodyPart
         previousAction = action;
     end
-    local bandage = fak.bestBandage(fak.bandages(firstAidKit));
-    local bandageItem = InventoryItemFactory.CreateItem(bandage.type);
+    local bandage = MutiesBulkStorage.FindItemInStorage(firstAidKit, fak.LimitNames.Bandage);
+    local bandageItem = MutiesBulkStorage.InstantiateInventoryItemFromStorage(firstAidKit, bandage);
     self.panel:getDoctor():getInventory():addItem(bandageItem);
-    fak.removeBandage(firstAidKit, bandage);
+    MutiesBulkStorage.RemoveItemFromStorage(firstAidKit, bandage);
     local applyBandage = ISApplyBandage:new(self.panel:getDoctor(), self.panel:getPatient(), bandageItem, self.bodyPart, true);
     ISTimedActionQueue.addAfter(previousAction, applyBandage);
 end
@@ -79,7 +79,7 @@ end
 -- Used in ISHealthPanel.lua
 function DisinfectHandler:checkItem(item)
     if item:getFullType() == fak.itemType then
-        if fak.disinfectantUses(item) > 0 then
+        if MutiesBulkStorage.Predicate.CanTakeFromStorage(item, fak.LimitNames.Disinfectant) then
             table.insert(self.items, item);
         end
     end
@@ -115,19 +115,11 @@ function DisinfectHandler:perform(previousAction)
         self.panel.actions[action] = self.bodyPart
         previousAction = action;
     end
-    local disinfectant = fak.bestDisinfectant(fak.disinfectants(firstAidKit));
+    local disinfectant = MutiesBulkStorage.FindItemInStorage(firstAidKit, fak.LimitNames.Disinfectant);
     ---@type Food | InventoryItem
-    local disinfectantItem;
-    if disinfectant.useDelta then
-        disinfectantItem = InventoryItemFactory.CreateItem(disinfectant.type, disinfectant.useDelta);
-    else
-        disinfectantItem = InventoryItemFactory.CreateItem(disinfectant.type);
-        disinfectantItem:setHungChange(-0.1);
-        disinfectantItem:setThirstChange(-0.1);
-        disinfectantItem:setReplaceOnUse(nil);
-    end
+    local disinfectantItem = MutiesBulkStorage.InstantiateInventoryItemFromStorage(firstAidKit, disinfectant);
     self.panel:getDoctor():getInventory():addItem(disinfectantItem);
-    fak.removeDisinfectantUse(firstAidKit, disinfectant);
+    MutiesBulkStorage.RemoveItemFromStorage(firstAidKit, disinfectant);
     local disinfect = ISDisinfect:new(self.panel:getDoctor(), self.panel:getPatient(), disinfectantItem, self.bodyPart);
     ISTimedActionQueue.addAfter(previousAction, disinfect);
 end
