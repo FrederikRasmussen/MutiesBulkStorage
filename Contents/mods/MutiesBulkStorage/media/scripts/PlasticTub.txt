@@ -1,0 +1,58 @@
+module Mutie
+{
+    item PlasticTubEmpty
+    {
+        DisplayName = Plastic Tub with Lid,
+        DisplayCategory = PackingMaterial,
+        Icon = PlasticTubEmpty,
+        Type = Normal,
+        Weight = 0.2,
+    }
+
+	item PlasticTubFlour
+	{
+	    DisplayCategory = Food,
+		Weight	=	1,
+		Type	=	Drainable,
+		UseWhileEquipped	=	FALSE,
+		UseDelta	=	0.0625,
+		DisplayName	=	Plastic Tub (Flour),
+		Icon	=	PlasticTubFlour,
+		ReplaceOnDeplete = PlasticTubEmpty,
+	}
+
+	recipe Fill plastic tub with flour
+	{
+	    Mutie.PlasticTubEmpty,
+	    Base.Flour=1,
+
+	    Result: Mutie.PlasticTubFlour,
+
+	    Time: 100.0,
+	    OnCreate: MutiesBulkStorage.OnCreate.FillPlasticTubWithFlour
+	}
+
+	recipe Add flour to plastic tub
+	{
+	    Mutie.PlasticTubFlour=1,
+	    Base.Flour=1,
+
+	    Result: Mutie.PlasticTubFlour,
+
+	    Time: 100.0,
+	    OnTest: MutiesBulkStorage.Predicate.CanAddFlourToPlasticTub,
+	    OnCreate: MutiesBulkStorage.OnCreate.FillPlasticTubWithFlour,
+	}
+
+    item PlasticTubCornflour
+    {
+        DisplayCategory = Food,
+        Weight	=	1,
+        Type	=	Drainable,
+        UseWhileEquipped	=	FALSE,
+        UseDelta	=	0.0625,
+        DisplayName	=	Plastic Tub (Corn Flour),
+        Icon	=	PlasticTubCornflour,
+        ReplaceOnDeplete = PlasticTubEmpty,
+    }
+}
